@@ -1,15 +1,30 @@
-﻿## ================================================
+## ================================================
 ## ==                                            ==
 ## ==               script version 0.60          ==
 ## ==                                            ==
 ## ==                                 Moroz Oleg ==
 ## ==                                 16/01/2013 ==
-## ==                             mod 16/01/2013 ==
+## ==                             mod 24/02/2013 ==
 ## ================================================
 
 $cDir = Get-Location
 $serversFile = $cDir.Path + "\srvs.csv"
+$enableFile = $cDir.Path + "\enable.csv"
+$deleteFile = $cDir.Path + "\delete.csv"
 $servers = Import-Csv $serversFile
+$enableCSV = Import-Csv  $enableFile
+$deleteCSV = Import-Csv $deleteFile
+
+$itemsToEnable = @()
+$itemsToDelete = @()
+
+ForEach ($a in $enableCSV) {
+    $itemsToEnable += $a.ext
+}
+
+ForEach ($b in $deleteCSV) {
+    $itemsToDelete += $b.item
+}
 
 Function ConfigAppHost($hostPath) {
     Write-Host "Make Config for $hostPath"
@@ -20,8 +35,8 @@ Function ConfigAppHost($hostPath) {
     $cDate = (Get-Date).ToString("yyyyMMdd-hhmms")
     $IISBkp = $IISCfg + "_$cDate"
 
-    $itemToEnable = @(".skin", ".config", ".vb", ".resources", ".mdb", ".java", ".mdf")
-    $itemsToDelete = @("bin")
+    #$itemToEnable = @(".skin", ".config", ".vb", ".resources", ".mdb", ".java", ".mdf")
+    #$itemsToDelete = @("bin")
 
     Copy-Item $IISCfg $IISBkp
     $xml = [xml](Get-Content $IISCfg -Encoding UTF8)
